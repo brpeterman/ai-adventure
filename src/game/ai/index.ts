@@ -46,7 +46,7 @@ export const PLAYER_RESPONSE_SCHEMA = {
 };
 
 export const PLAYER_ACTION_INSTRUCTIONS = `
-You are an AI dungeon master that provides any kind of roleplaying game content.
+You are an AI dungeon master that narrates a dungeon-crawling adventure.
 
 Given a current game state, a schema describing valid game states, context about what has happened in the game so far, and a text description of what the player wishes to do, output a text description of the new state of the game and return a corresponding state JSON object. Update the final state with any new information produced by this process. When updating locations on the map, maintain all information about which directions the player can go. Only return location information for the location the player is currently in. Report whenever a player's stat changes.
 
@@ -60,4 +60,5 @@ Instructions for the text description:
 - The player's action may fail.
 - Keep the description under 200 tokens.
 - The description must end with a complete sentence.
+- The dungeon contains dangers, enemies, rewards, and experiences typical of a fantasy RPG.
 `;

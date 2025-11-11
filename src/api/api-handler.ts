@@ -27,12 +27,16 @@ export default class ApiHandler {
         const actionText = requestData.action;
         const initialState = requestData.gameState;
         const initialContext = requestData.context;
+        const persistentContext = requestData.persistentContext ?? "";
+        const additionalInstructions = requestData.additionalInstructions ?? "";
 
         // Execute
         const aiResponse = await this.aiController.executePlayerAction({
             actionText,
             initialState,
-            initialContext
+            initialContext,
+            persistentContext,
+            additionalInstructions,
         });
 
         // Aggregate

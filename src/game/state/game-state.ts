@@ -11,6 +11,7 @@ export interface GameState {
 export interface Player {
   location: MapCoordinates;
   stats: PlayerStats;
+  inventory: PlayerInventory;
 }
 /**
  * Location on a coordinate plane corresponding to a place on the game map.
@@ -48,7 +49,29 @@ export interface Location {
   coords: MapCoordinates;
 
   /**
-   * Text description of the location.
+   * Text description of the location in plain, unstructured text.
    */
   description: string;
+}
+
+export interface PlayerInventory {
+  /**
+   * List of items the player is currently carrying.
+   */
+  items: InventoryItem[];
+}
+
+export interface InventoryItem {
+  /**
+   * Name of the item.
+   */
+  name: string;
+  /**
+   * Description of the item in plain, unstructured text.
+   */
+  description: string;
+  /**
+   * Number of the item currently held.
+   */
+  quantity: number;
 }

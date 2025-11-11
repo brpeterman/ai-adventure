@@ -3,8 +3,8 @@ import History from './components/History.tsx'
 import { useState } from 'react';
 import type { GameState } from './game/state/game-state.ts';
 import Debug from './components/Debug.tsx';
+import Setup from './components/Setup.tsx';
 
-const INITIAL_CONTEXT = "You awaken in a dimly-lit room made entirely of stone. The air tastes damp, and torches flicker on the east and west walls. You don't remember why you're here.";
 const INITIAL_GAME_STATE: GameState = {
   player: {
     location: {
@@ -14,20 +14,24 @@ const INITIAL_GAME_STATE: GameState = {
     stats: {
       healthPoints: 10,
       maximumHealthPoints: 10,
+    },
+    inventory: {
+      items: [],
     }
   },
   map: {
     locations: [{
       coords: { x: 0, y: 0 },
-      description: "An unremarkable dungeon room. There are exits to the north, south, east, and west."
+      description: ""
     }],
   }
 };
 
 function App() {
-  const [context, setContext] = useState(INITIAL_CONTEXT);
+  const [context, setContext] = useState("");
   const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
   const [actionsEnabled, setActionsEnabled] = useState(true);
+  const [setupState, setSetupState] = useState({ aiInstructions: "", persistentContext: ""});
 
   const submitAction = async (input: string) => {
     setActionsEnabled(false);
@@ -40,12 +44,26 @@ function App() {
         context,
         action: input,
         gameState,
+        persistentContext: setupState.persistentContext,
+        additionalInstructions: setupState.aiInstructions,
       })
     });
     const body = await response.json();
     setContext(body.context);
     setGameState(body.gameState);
     setActionsEnabled(true);
+  };
+
+  const initializeGame = (params: {
+    storyIntro: string,
+    persistentContext: string,
+    aiInstructions: string,
+  }) => {
+    setSetupState({
+      aiInstructions: params.aiInstructions,
+      persistentContext: params.persistentContext,
+    });
+    setContext(params.storyIntro);
   };
 
   return (
@@ -60,15 +78,22 @@ function App() {
           flex-row
           max-w-10/12
           m-auto">
-          <div className="flex-1">
-            <History context={context}/>
-          </div>
-          <div className="mt-2">
-            <PlayerInput submitCallback={submitAction} actionsEnabled={actionsEnabled}/>
-          </div>
-          <div className="flex-1">
-            <Debug gameState={gameState} expanded={false}/>
-          </div>
+          {!context && (
+            <Setup onStart={initializeGame}/>
+          )}
+          {context && (
+            <>
+              <div className="flex-1">
+                <History context={context}/>
+              </div>
+              <div className="mt-2">
+                <PlayerInput submitCallback={submitAction} actionsEnabled={actionsEnabled}/>
+              </div>
+              <div className="flex-1">
+                <Debug gameState={gameState} expanded={false}/>
+              </div>
+            </>
+          )}
         </div>
     </div>
   )

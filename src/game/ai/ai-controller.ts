@@ -1,5 +1,5 @@
 import { PLAYER_ACTION_INSTRUCTIONS, type AiService, type PlayerActionResponse } from "./index.ts"
-import { getGameStateJsonSchema, type GameState } from "../state/index.ts";
+import { getGameStateJsonSchema, type GameState, type MapCoordinates } from "../state/index.ts";
 
 /**
  * AiController is the interface all external calls to AI services go through.
@@ -17,13 +17,44 @@ export class AiController {
     async executePlayerAction(params: {
         actionText: string,
         initialState: GameState,
-        initialContext: string
+        initialContext: string,
+        persistentContext: string,
+        additionalInstructions: string,
     }): Promise<PlayerActionResponse> {
-        return await this.aiService.executePlayerAction(PLAYER_ACTION_INSTRUCTIONS, {
+        // Prune the locations to only those that are relevant to the current context
+        const relevantLocations = params.initialState.map.locations.filter(location => this._isLocal(location.coords, params.initialState.player.location));
+        const prunedState = {
+            ...params.initialState,
+            map: {
+                ...params.initialState.map,
+                locations: relevantLocations,
+            },
+        };
+
+        const fullInstructions = this._mergeInstructions(PLAYER_ACTION_INSTRUCTIONS, params.additionalInstructions);
+        const fullContext = this._mergeContext(params.initialContext, params.persistentContext);
+
+        return await this.aiService.executePlayerAction(fullInstructions, {
             actionText: params.actionText,
-            currentState: params.initialState,
+            currentState: prunedState,
             stateSchema: getGameStateJsonSchema(),
-            storyContext: params.initialContext,
+            storyContext: fullContext,
         });
+    }
+
+    private _isLocal(locationCoords: MapCoordinates, playerCoords: MapCoordinates): boolean {
+        const distance = Math.sqrt(
+            Math.pow(locationCoords.x - playerCoords.x, 2) +
+            Math.pow(locationCoords.y - playerCoords.y, 2)
+        );
+        return distance <= 1;
+    }
+
+    private _mergeInstructions(defaultInstruction: string, additionalInstructions: string) {
+        return `${defaultInstruction}\n${additionalInstructions}`;
+    }
+
+    private _mergeContext(storyContext: string, persistentContext: string) {
+        return `${persistentContext}\n\n${storyContext}`;
     }
 }

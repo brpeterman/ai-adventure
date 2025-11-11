@@ -6,7 +6,7 @@ export function integrateContext(params: {
     // Extremely simple implementation for testing
     return `${params.initialContext}
 
-    You ${params.action}.
+    > You ${params.action}.
     
     ${params.newContext}`;
 }

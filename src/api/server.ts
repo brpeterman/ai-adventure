@@ -1,16 +1,17 @@
 import express from "express";
 import ViteExpress from "vite-express";
-import { AiController, OpenAiService } from "../game/ai/index.ts";
+import { AiController, OllamaService } from "../game/ai/index.ts";
 import ApiHandler from "./api-handler.ts";
 
 const API_PORT = 3000;
+const OLLAMA_MODEL = process.env['OLLAMA_MODEL']!;
 
 const app = express();
 app.use(express.json());
 
 const apiHandler = new ApiHandler({
     aiController: new AiController({
-        aiService: new OpenAiService()
+        aiService: new OllamaService(OLLAMA_MODEL),
     })
 });
 

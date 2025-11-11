@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { PLAYER_RESPONSE_SCHEMA, type AiService, type PlayerAction, type PlayerActionResponse } from './index.ts';
+import { PLAYER_ACTION_RESPONSE_SCHEMA, type AiService, type PlayerAction, type PlayerActionResponse } from './index.ts';
 
 export class OpenAiService implements AiService {
     readonly client: OpenAI;
@@ -23,12 +23,10 @@ export class OpenAiService implements AiService {
                 format: {
                     name: "PlayerActionResponse",
                     type: "json_schema",
-                    schema: PLAYER_RESPONSE_SCHEMA,
+                    schema: PLAYER_ACTION_RESPONSE_SCHEMA,
                 }
             },
         });
-
-        console.log(`AI response: ${JSON.stringify(response, null, 2)}`);
 
         return response.output_parsed as unknown as PlayerActionResponse;
     }

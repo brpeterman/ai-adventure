@@ -12,6 +12,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
     "express": "^5.1.0",
+    "ollama": "^0.6.2",
     "openai": "^6.8.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

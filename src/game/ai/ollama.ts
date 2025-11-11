@@ -2,6 +2,7 @@ import ollama from "ollama";
 import { type AiService, type PlayerAction } from "./index.ts";
 import type { GameState } from "../state/game-state.ts";
 import type { Definition } from "typescript-json-schema";
+import { formatActionText } from "../context/index.ts";
 
 export class OllamaService implements AiService {
     private readonly storytellerModel: string;
@@ -19,7 +20,11 @@ export class OllamaService implements AiService {
         const response = await ollama.generate({
             model: this.storytellerModel,
             system: instructions,
-            prompt: JSON.stringify(input),
+            prompt: JSON.stringify({
+                history: this._playerActionToPrompt(input),
+                gameState: input.currentState,
+                stateScema: input.stateSchema,
+            }),
             stream: false,
             options: {
                 num_predict: 4096,
@@ -40,7 +45,13 @@ export class OllamaService implements AiService {
             stream: false,
             format: stateSchema,
         });
-        console.log(`Analytical AI Response: ${JSON.stringify(response, null, 2)}`);
         return JSON.parse(response.response) as unknown as GameState;
+    }
+
+    private _playerActionToPrompt(action: PlayerAction) {
+        if (action.actionText?.length > 0) {
+            return `${action.storyContext}\n\n> ${formatActionText(action.actionText)}\n\n}`;
+        }
+        return action.storyContext;
     }
 }

@@ -5,7 +5,7 @@ interface HistoryProps {
 }
 
 const History = (props: HistoryProps) => {
-    const storyEndRef = useRef(null);
+    const storyEndRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         storyEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [props.context]);

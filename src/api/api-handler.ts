@@ -15,16 +15,13 @@ export default class ApiHandler {
     async executePlayerAction(request: Request, response: Response) {
         // Validate
         const requestData = request.body;
-        if (!requestData.action) {
-            throw new Error("action is required");
-        }
         if (!requestData.gameState) {
             throw new Error("gameState is required");
         }
         if (!requestData.context) {
             throw new Error("context is required");
         }
-        const actionText = requestData.action;
+        const actionText = requestData.action ?? "";
         const initialState = requestData.gameState;
         const initialContext = requestData.context;
         const persistentContext = requestData.persistentContext ?? "";

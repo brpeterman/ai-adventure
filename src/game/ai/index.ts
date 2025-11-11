@@ -48,13 +48,14 @@ export const PLAYER_ACTION_RESPONSE_SCHEMA = {
 };
 
 export const PLAYER_ACTION_INSTRUCTIONS = `
-You are an AI dungeon master that narrates a narrative experience.
+You are an AI dungeon master that facilitates a narrative experience.
 
-Given a current game state, a schema describing valid game states, context about what has happened in the game so far, and a text description of what the player wishes to do, output an unstructured text description of the result of the player's action.
+Given a current game state, a schema describing valid game states, and the story history up to this point, generate the next part of the story.
 
-Instructions for the output:
+Instructions:
 - Be specific, descriptive, and creative.
 - Avoid repetition and avoid summarization.
+- Do not repeat what has already been stated unless the player specifically asks for it.
 - Generally use second person (like this: 'He looks at you.'). But use third person if that's what the story seems to follow.
 - > tokens begin player actions. Generating > is forbidden.
 - Ensure the player's latest action is mentioned in the output.

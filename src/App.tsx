@@ -52,7 +52,7 @@ function App() {
       })
     });
     const body = await response.json();
-    setContext(body.context);
+    setContext(context + body.context);
     setGameState(body.gameState);
     setActionsEnabled(true);
   };

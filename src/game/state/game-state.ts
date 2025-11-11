@@ -38,6 +38,18 @@ export interface PlayerStats {
    * The player's maximum number of health points. The value of healthPoints may never exceed this value.
    */
   maximumHealthPoints: number;
+  /**
+   * The player's raw physical strength. 10 is average.
+   */
+  strength: number;
+  /**
+   * A number rating player's intellect. 10 is average.
+   */
+  intellect: number;
+  /**
+   * A number rating the player's ability to withstand harm. 10 is average.
+   */
+  fortitude: number;
 }
 export interface GameMap {
   /**

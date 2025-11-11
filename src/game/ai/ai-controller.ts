@@ -1,4 +1,4 @@
-import { PLAYER_ACTION_INSTRUCTIONS, type AiService, type PlayerActionResponse } from "./index.ts"
+import { PLAYER_ACTION_INSTRUCTIONS, UPDATE_STATE_INSTRUCTIONS, type AiService, type PlayerActionResponse } from "./index.ts"
 import { getGameStateJsonSchema, type GameState, type MapCoordinates } from "../state/index.ts";
 
 /**
@@ -34,12 +34,17 @@ export class AiController {
         const fullInstructions = this._mergeInstructions(PLAYER_ACTION_INSTRUCTIONS, params.additionalInstructions);
         const fullContext = this._mergeContext(params.initialContext, params.persistentContext);
 
-        return await this.aiService.executePlayerAction(fullInstructions, {
+        const responseText = await this.aiService.executePlayerAction(fullInstructions, {
             actionText: params.actionText,
             currentState: prunedState,
             stateSchema: getGameStateJsonSchema(),
             storyContext: fullContext,
         });
+        const newState = await this.aiService.updateStateFromAction(UPDATE_STATE_INSTRUCTIONS, prunedState, getGameStateJsonSchema(), responseText);
+        return {
+            gameState: newState,
+            textDescription: responseText,
+        };
     }
 
     private _isLocal(locationCoords: MapCoordinates, playerCoords: MapCoordinates): boolean {

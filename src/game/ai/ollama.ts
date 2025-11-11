@@ -1,24 +1,46 @@
 import ollama from "ollama";
-import { PLAYER_ACTION_RESPONSE_SCHEMA, type AiService, type PlayerAction, type PlayerActionResponse } from "./index.ts";
+import { type AiService, type PlayerAction } from "./index.ts";
+import type { GameState } from "../state/game-state.ts";
+import type { Definition } from "typescript-json-schema";
 
 export class OllamaService implements AiService {
-    private readonly model: string;
+    private readonly storytellerModel: string;
+    private readonly analyticalModel: string;
 
-    constructor(model: string) {
-        this.model = model;
+    constructor(params: {
+        storytellerModel: string,
+        analyticalModel: string,
+    }) {
+        this.storytellerModel = params.storytellerModel;
+        this.analyticalModel = params.analyticalModel;
     }
 
     async executePlayerAction(instructions: string, input: PlayerAction) {
         const response = await ollama.generate({
-            model: this.model,
+            model: this.storytellerModel,
             system: instructions,
             prompt: JSON.stringify(input),
-            format: PLAYER_ACTION_RESPONSE_SCHEMA,
             stream: false,
             options: {
                 num_predict: 4096,
             },
         });
-        return JSON.parse(response.response) as unknown as PlayerActionResponse;
+        return response.response;
+    }
+
+    async updateStateFromAction(instructions: string, currentState: GameState, stateSchema: Definition, action: string): Promise<GameState> {
+        const response = await ollama.generate({
+            model: this.analyticalModel,
+            system: instructions,
+            prompt: JSON.stringify({
+                gameState: currentState,
+                action,
+                stateSchema
+            }),
+            stream: false,
+            format: stateSchema,
+        });
+        console.log(`Analytical AI Response: ${JSON.stringify(response, null, 2)}`);
+        return JSON.parse(response.response) as unknown as GameState;
     }
 }

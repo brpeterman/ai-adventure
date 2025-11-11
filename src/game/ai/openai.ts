@@ -1,5 +1,7 @@
 import OpenAI from 'openai';
 import { PLAYER_ACTION_RESPONSE_SCHEMA, type AiService, type PlayerAction, type PlayerActionResponse } from './index.ts';
+import type { GameState } from '../state/game-state.ts';
+import type { Definition } from 'typescript-json-schema';
 
 export class OpenAiService implements AiService {
     readonly client: OpenAI;
@@ -28,6 +30,10 @@ export class OpenAiService implements AiService {
             },
         });
 
-        return response.output_parsed as unknown as PlayerActionResponse;
+        return ""; // response.output_parsed as unknown as PlayerActionResponse;
+    }
+
+    async updateStateFromAction(instructions: string, currentState: GameState, stateSchema: Definition, action: string): Promise<GameState> {
+        return {} as unknown as GameState;
     }
 }

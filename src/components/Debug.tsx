@@ -14,7 +14,7 @@ const Debug = (props: DebugProps) => {
     };
 
     return (
-        <section id="debug" className="overflow-auto overscroll-contain max-h-100">
+        <section id="debug" className="max-h-100">
             <button
                 className="
                     bg-gray-300
@@ -31,6 +31,10 @@ const Debug = (props: DebugProps) => {
                 className={`
                     bg-white
                     text-black
+                    overflow-auto
+                    overscroll-contain
+                    max-h-80
+                    w-full
                     ${expanded ? " block" : " hidden"}`}>
                     { JSON.stringify(props.gameState, null, 2) 
                 }</pre>

@@ -14,6 +14,9 @@ const INITIAL_GAME_STATE: GameState = {
     stats: {
       healthPoints: 10,
       maximumHealthPoints: 10,
+      strength: Math.floor(Math.random() * 5 + 8),
+      intellect: Math.floor(Math.random() * 5 + 8),
+      fortitude: Math.floor(Math.random() * 5 + 8),
     },
     inventory: {
       items: [],
